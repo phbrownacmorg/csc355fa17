@@ -82,9 +82,9 @@ function makeWorld() {
 	function animate() {
 		requestAnimationFrame( animate );
 		cone.rotation.y += 0.01;
-		//ignatz.rotation.y += 0.01;
+		//ignatz.rotation.x += 0.01;
 		//jack2.rotation.y -= 0.01;
-		//steve.rotation.y += 0.01;
+		//steve.rotation.x += 0.01;
 		// text.rotation.x += 0.01;
 		// text.rotation.y += 0.01;
 		// text.rotation.z += 0.01;

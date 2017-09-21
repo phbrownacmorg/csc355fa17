@@ -38,12 +38,18 @@ function makeJack2() {
 
 function makeShoe(xDir) {
 	var shoeRadius = 0.25;
-	var geometry = new THREE.SphereGeometry(shoeRadius, 16, 8, 
+	var wSegs = 32;
+	var geometry = new THREE.SphereGeometry(shoeRadius, 
+	            wSegs, wSegs/2, 
 				0, Math.PI);
 	var material = new THREE.MeshBasicMaterial( { color: 0x000000,
 																							 side: THREE.DoubleSide
 																							} );
 	var shoe = new THREE.Mesh( geometry, material );
+	var sole = new THREE.Mesh(new THREE.CircleGeometry(shoeRadius,
+	                                                   wSegs),
+	                          material);
+	shoe.add(sole);
 	shoe.scale.y = 1 / shoeRadius;
 	shoe.rotateX(-Math.PI / 2);
 	shoe.translateZ( -1 );
@@ -79,7 +85,7 @@ function makeSteve() {
     			map: new THREE.TextureLoader().load('images/steve-top.png')
     		}),
     	new THREE.MeshLambertMaterial({
-    			map: new THREE.TextureLoader().load('images/black.png')
+    			color: 0x000000
     		}),
     	new THREE.MeshLambertMaterial({
     			map: new THREE.TextureLoader().load('images/steve-r-side.png')
@@ -93,11 +99,19 @@ function makeSteve() {
 }
 
 function makeCone() {
+	var bumps = new THREE.TextureLoader().load('images/Hermann-grid-256.png');
+	bumps.wrapS = THREE.RepeatWrapping;
+	bumps.wrapT = THREE.RepeatWrapping;
+	bumps.repeat.set(4, 4);
 	var geom = new THREE.ConeGeometry(1, 3, 32, 1, true);
-	var bumps = new THREE.TextureLoader().load('images/waffle.jpg');
-	var mat = new THREE.MeshPhongMaterial( { color: 0x444400,
-																				   bumpMap: bumps });
+	var mat = new THREE.MeshPhongMaterial( { color: 0x8b4513, bumpMap: bumps });
 	var cone = new THREE.Mesh(geom, mat);
+	var ball = new THREE.Mesh(new THREE.SphereGeometry(1, 256, 256),
+	                           new THREE.MeshPhongMaterial( { color: 0xd2691e, 
+	                                                          displacementMap: bumps,
+	                                                          displacementScale: 0.15 }));
+	ball.translateY(-2.1);
+    cone.add(ball);
 	cone.rotation.z = Math.PI;
 	return cone;
 }
