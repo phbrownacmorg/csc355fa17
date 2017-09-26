@@ -99,12 +99,7 @@ function makeSteve() {
 }
 
 function makeCone() {
-	//var bumps = new THREE.TextureLoader().load('images/Hermann-grid-256.png');
-	//bumps.wrapS = THREE.RepeatWrapping;
-	//bumps.wrapT = THREE.RepeatWrapping;
-	//bumps.repeat.set(4, 4);
 	var geom = new THREE.ConeGeometry(1, 3, 32, 1, true);
-//<<<<<<< HEAD
 	var bumps = new THREE.TextureLoader().load('images/waffle.jpg');
 	bumps.wrapS = THREE.RepeatWrapping;
 	var mat = new THREE.MeshPhongMaterial( { color: 0x8b4513,
@@ -119,17 +114,6 @@ function makeCone() {
 	var ice_cream = new THREE.Mesh(geom, mat);
 	ice_cream.translateY(-2);
 	cone.add(ice_cream);
-	
-//=======
-	//var mat = new THREE.MeshPhongMaterial( { color: 0x8b4513, bumpMap: bumps });
-	//var cone = new THREE.Mesh(geom, mat);
-	//var ball = new THREE.Mesh(new THREE.SphereGeometry(1, 256, 256),
-	//                           new THREE.MeshPhongMaterial( { color: 0xd2691e, 
-	//                                                          displacementMap: bumps,
-	//                                                          displacementScale: 0.15 }));
-	//ball.translateY(-2.1);
-  //cone.add(ball);
-//>>>>>>> 9c3ad92d6793f7f3000fde1163bc5ddab4d447f7
 	cone.rotation.z = Math.PI;
 	return cone;
 }
