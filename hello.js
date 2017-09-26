@@ -27,11 +27,11 @@ function makeWorld() {
 	sky.translateZ( -900 );
 	//sky.material.map = THREE.
 	scene.add(sky);
-	var ground = makeBgPlane(0x00dd00, 'images/checkerboard4.png');
-	var tex = ground.material.map;
-	tex.wrapS = THREE.RepeatWrapping;
-    tex.wrapT = THREE.RepeatWrapping;
-    tex.repeat.set(128,128);
+	var ground = makeBgPlane(0x00dd00); //, 'images/checkerboard4.png');
+	//var tex = ground.material.map;
+	//tex.wrapS = THREE.RepeatWrapping;
+    //tex.wrapT = THREE.RepeatWrapping;
+    //tex.repeat.set(128,128);
 	ground.rotateX(-Math.PI / 2);
 	ground.translateZ( -10 );
 	scene.add(ground);

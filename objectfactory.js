@@ -95,9 +95,20 @@ function makeSteve() {
 function makeCone() {
 	var geom = new THREE.ConeGeometry(1, 3, 32, 1, true);
 	var bumps = new THREE.TextureLoader().load('images/waffle.jpg');
-	var mat = new THREE.MeshPhongMaterial( { color: 0x444400,
+	bumps.wrapS = THREE.RepeatWrapping;
+	var mat = new THREE.MeshPhongMaterial( { color: 0x8b4513,
 																				   bumpMap: bumps });
 	var cone = new THREE.Mesh(geom, mat);
+	
+	geom = new THREE.SphereGeometry(1, 256, 256);
+	mat = new THREE.MeshPhongMaterial( { color: 0xf3e5ab,
+																			 bumpMap: bumps,
+																		 	 displacementMap: bumps,
+																		   displacementScale: 0.2 });
+	var ice_cream = new THREE.Mesh(geom, mat);
+	ice_cream.translateY(-2);
+	cone.add(ice_cream);
+	
 	cone.rotation.z = Math.PI;
 	return cone;
 }
