@@ -78,16 +78,20 @@ function makeWorld() {
 	var renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight);
 	document.getElementById('three-js-div').appendChild( renderer.domElement );
-
+	
+	attachHandlers(camera);
+	
 	function animate() {
 		requestAnimationFrame( animate );
-		cone.rotation.y += 0.01;
-		//ignatz.rotation.x += 0.01;
-		//jack2.rotation.y -= 0.01;
-		//steve.rotation.x += 0.01;
-		// text.rotation.x += 0.01;
-		// text.rotation.y += 0.01;
-		// text.rotation.z += 0.01;
+		if (rotating) {
+			cone.rotation.y += 0.01;
+			//ignatz.rotation.x += 0.01;
+			//jack2.rotation.y -= 0.01;
+			//steve.rotation.x += 0.01;
+			// text.rotation.x += 0.01;
+			// text.rotation.y += 0.01;
+			// text.rotation.z += 0.01;
+		}
 		renderer.render( scene, camera );
 	}
 	animate();
