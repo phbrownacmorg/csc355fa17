@@ -7,7 +7,12 @@
 <title>Hello, Three!</title>
 <style type="text/css">
 	body { margin: 0; }
-	canvas { width: 100%; height: 100% }
+	#three-js-div { z-index: 0; }
+	canvas { width: 100%; height: 100%; 
+		position: absolute; left: 0; top: 0; 
+		z-index: 0;}
+	#help-form { position: relative; z-index: 1; }
+	#help-text { position: relative; z-index: -1; }
 </style>
 <script src="three.min.js"></script>
 <script src="objectfactory.js"></script>
@@ -16,6 +21,16 @@
 
 <body>
 	<div id="three-js-div">
+		<form id="help-form" action="." method="post">
+			<input type="button" id="help-button" value="Show help" />
+		</form>
+		<div id="help-text">
+			Commands:
+			<dl>
+				<dt>Spacebar</dt><dd>Toggle rotation of cone</dd>
+				<dt>&leftarrow;, &uparrow;, &downarrow;, &rightarrow;</dt><dd>Move the eyepoint in the indicated direction</dd>
+			</dl>
+		</div>
 	</div>
 <script src="hello.js">
 </script>

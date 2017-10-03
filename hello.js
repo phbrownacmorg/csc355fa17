@@ -77,7 +77,9 @@ function makeWorld() {
 
 	var renderer = new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight);
-	document.getElementById('three-js-div').appendChild( renderer.domElement );
+	document.getElementById('three-js-div')
+			.insertBefore( renderer.domElement,
+									   document.getElementById('help-form'));
 	
 	attachHandlers(camera);
 	
