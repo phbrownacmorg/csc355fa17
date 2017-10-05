@@ -118,6 +118,14 @@ function makeCone() {
 	return cone;
 }
 
+function setPickTarget(obj, target) {
+		obj.pickTarget = target;
+		for (var i = 0; i < obj.children.length; i++) {
+				setPickTarget(obj.children[i], target);
+		}
+}
+
+
 
 function makeText(msg) {
 	// Font-loading is *not* being handled intelligently here.

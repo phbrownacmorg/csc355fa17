@@ -40,16 +40,19 @@ function makeWorld() {
 	//steve.scale.set(0.5, 0.5, 0.5);
 	//steve.translateZ(-768);
 	steve.translateX(-4);
+	setPickTarget(steve, steve);
 	//steve.translateY(246);
 	scene.add( steve );
 	
 	var ignatz = makeIgnatz();
 	ignatz.translateY(1);
+	setPickTarget(ignatz, ignatz);
 	scene.add( ignatz );
 	
 	var cone = makeCone();
 	cone.translateZ(-2);
 	cone.translateX(3);
+	setPickTarget(cone, cone);
 	scene.add(cone);
 	
 	//var text = makeText('Hello, Ignatz!');
@@ -58,12 +61,12 @@ function makeWorld() {
 	//scene.add(text);
 	
 	// Make a jack with the AxisHelper
-	var jack1 = new THREE.AxisHelper(2);
-	scene.add(jack1);
+	//var jack1 = new THREE.AxisHelper(2);
+	//scene.add(jack1);
 	
 	// Make a jack using a hierarchy of arrows
-	var jack2 = makeJack2();
-	scene.add(jack2);							
+	//var jack2 = makeJack2();
+	//scene.add(jack2);							
 
 	// Turn on the lights
 	addLights(scene);
@@ -81,7 +84,7 @@ function makeWorld() {
 			.insertBefore( renderer.domElement,
 									   document.getElementById('help-form'));
 	
-	attachHandlers(camera);
+	attachHandlers(camera, scene.children);
 	
 	function animate() {
 		requestAnimationFrame( animate );

@@ -28,7 +28,26 @@ function moveCamera(camera, dx, dy) {
   camera.lookAt.set(0, 0, 0);
 }
 
-function attachHandlers(camera) {
+var selectedObject;
+function pickObject(obj) {
+    // Deselect the previously selected object, if any
+    if (selectedObject) {
+        selectedObject.selected = false;
+        if (selectedObject.material.color) {
+            selectedObject.material.color.set(selectedObject.originalColor);
+        }
+    }
+    // Select the new one
+    selectedObject = obj;
+    selectedObject.selected = true;
+    // Indicate the change
+    if (selectedObject.material.color) {
+      selectedObject.originalColor = selectedObject.material.color.getStyle();
+      selectedObject.material.color.set('rgb(255, 0, 0)');
+    }
+}
+
+function attachHandlers(camera, objList) {
   var target = document.getElementsByTagName('body')[0];
   target.addEventListener('keydown', function(evt) {
     var d = 0.1;
@@ -56,6 +75,29 @@ function attachHandlers(camera) {
         break;
     };
     evt.preventDefault();
+  });
+  
+  // Mouse handler
+  var raycaster = new THREE.Raycaster();
+  var mouse = new THREE.Vector2();
+  target.addEventListener('click', function(evt) {
+      // Set mouse to NDC
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      console.log(mouse.x + ',' + mouse.y);
+      raycaster.setFromCamera(mouse, camera);
+      
+      var hits = raycaster.intersectObjects(objList, true);
+      // Should always be true, since the background planes are included
+      if (hits.length > 0 && hits[0].object.pickTarget) {
+          pickObject(hits[0].object.pickTarget);
+//           for (var i = 0; i < hits.length; i++) {
+//             console.log(i + ' ' + hits[i].object.pickTarget);
+//           }
+//           console.log('');
+      }
+    
+      evt.preventDefault();
   });
   
   // Button handler
