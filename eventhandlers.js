@@ -1,9 +1,11 @@
-// Global variable to control whether objects are rotating or not
-rotating = true;
-
 // Space bar toggles whether objects are rotating
-function toggleRotation() {
-    rotating = !rotating;
+function toggleRotation(obj) {
+    // Instead of simple negation, this handles the case where the attribute
+    //   hasn't been set previously
+    if (!obj.rotating) { 
+      obj.rotating = true;
+    }
+    else { obj.rotating = false; }
 }
 
 function toggleHelpText() {
@@ -29,25 +31,49 @@ function moveCamera(camera, dx, dy) {
 }
 
 var selectedObject;
+
+function setSelected(obj, selectVal) {
+  obj.selected = selectVal;
+  if (obj.material.color) {
+    if (selectVal) {
+      obj.originalColor = obj.material.color.getStyle();
+      obj.material.color.set('rgb(255, 0, 0)');
+      console.log(obj.originalColor);
+    }
+    else {
+      obj.material.color.set(obj.originalColor);
+    }
+  }
+  
+  for (var i = 0; i < obj.children.length; i++) {
+    setSelected(obj.children[i], selectVal);
+  }
+}
+
 function pickObject(obj) {
     // Deselect the previously selected object, if any
     if (selectedObject) {
-        selectedObject.selected = false;
-        if (selectedObject.material.color) {
-            selectedObject.material.color.set(selectedObject.originalColor);
-        }
+        setSelected(selectedObject, false);
     }
     // Select the new one
     selectedObject = obj;
-    selectedObject.selected = true;
-    // Indicate the change
-    if (selectedObject.material.color) {
-      selectedObject.originalColor = selectedObject.material.color.getStyle();
-      selectedObject.material.color.set('rgb(255, 0, 0)');
-    }
+    setSelected(selectedObject, true);
+}
+
+// Converts the clientX and clientY of an event to NDC,
+// and returns a Vector2 set to the NDC values.
+function toNDC(event) {
+    var ndc = new THREE.Vector2((event.clientX / window.innerWidth) * 2 - 1,
+                                -(event.clientY / window.innerHeight) * 2 + 1);
+    return ndc;
 }
 
 function attachHandlers(camera, objList) {
+  // Find the cone
+  var cone = objList.filter(function(obj) {
+                                return obj.rotating;
+                           })[0];  // Only one object will pass the filter
+  
   var target = document.getElementsByTagName('body')[0];
   target.addEventListener('keydown', function(evt) {
     var d = 0.1;
@@ -67,7 +93,7 @@ function attachHandlers(camera, objList) {
         break;
       // Spacebar toggles rotation
       case ' ':
-        toggleRotation();
+        toggleRotation(cone);
         break;
       // ? toggles help text
       case '?':
@@ -79,24 +105,47 @@ function attachHandlers(camera, objList) {
   
   // Mouse handler
   var raycaster = new THREE.Raycaster();
-  var mouse = new THREE.Vector2();
-  target.addEventListener('click', function(evt) {
+  var click = new THREE.Vector2();
+  
+  var mousemovehandler = function(evt) {
+      var mouse = toNDC(evt);
+      // busy test *really* needs an atomic test-and-set
+      if (selectedObject && !selectedObject.busy) {
+          selectedObject.busy = true; // Flag to tell animate() not to mess...
+          var rot = selectedObject.getWorldQuaternion();
+          var invRot = rot.clone().inverse();
+          // Need to un-rotate first, so translation is in world X and Y
+          selectedObject.applyQuaternion(invRot);
+          // Make mouse relative to preceding coords
+          selectedObject.translateX(mouse.x - click.x);
+          selectedObject.translateY(mouse.y - click.y);
+          // Need to re-rotate the object, so translation doesn't
+          // overwrite its local rotation
+          selectedObject.applyQuaternion(rot);
+          click.copy(mouse);  // Only copy if this event was handled
+          selectedObject.busy = false;
+      }
+      evt.preventDefault();
+  }
+  
+  target.addEventListener('mousedown', function(evt) {
       // Set mouse to NDC
-      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-      console.log(mouse.x + ',' + mouse.y);
-      raycaster.setFromCamera(mouse, camera);
+      click = toNDC(evt);
+      console.log(click.x + ',' + click.y);
+      raycaster.setFromCamera(click, camera);
       
       var hits = raycaster.intersectObjects(objList, true);
-      // Should always be true, since the background planes are included
+      // hits.length always > 0, since the background planes are included
       if (hits.length > 0 && hits[0].object.pickTarget) {
           pickObject(hits[0].object.pickTarget);
-//           for (var i = 0; i < hits.length; i++) {
-//             console.log(i + ' ' + hits[i].object.pickTarget);
-//           }
-//           console.log('');
       }
     
+      target.addEventListener('mousemove', mousemovehandler);
+      evt.preventDefault();
+  });
+  
+  target.addEventListener('mouseup', function(evt) {
+      target.removeEventListener('mousemove', mousemovehandler);
       evt.preventDefault();
   });
   

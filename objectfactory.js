@@ -42,13 +42,14 @@ function makeShoe(xDir) {
 	var geometry = new THREE.SphereGeometry(shoeRadius, 
 	            wSegs, wSegs/2, 
 				0, Math.PI);
-	var material = new THREE.MeshBasicMaterial( { color: 0x000000,
+	var material = new THREE.MeshLambertMaterial( { color: 0x000000,
 																							 side: THREE.DoubleSide
 																							} );
-	var shoe = new THREE.Mesh( geometry, material );
+	// Clone the material to avoid aliasing
+	var shoe = new THREE.Mesh( geometry, material.clone() );
 	var sole = new THREE.Mesh(new THREE.CircleGeometry(shoeRadius,
 	                                                   wSegs),
-	                          material);
+	                          material.clone());
 	shoe.add(sole);
 	shoe.scale.y = 1 / shoeRadius;
 	shoe.rotateX(-Math.PI / 2);
@@ -124,8 +125,6 @@ function setPickTarget(obj, target) {
 				setPickTarget(obj.children[i], target);
 		}
 }
-
-
 
 function makeText(msg) {
 	// Font-loading is *not* being handled intelligently here.

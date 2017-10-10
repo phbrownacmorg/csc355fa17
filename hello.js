@@ -53,21 +53,9 @@ function makeWorld() {
 	cone.translateZ(-2);
 	cone.translateX(3);
 	setPickTarget(cone, cone);
+	cone.rotating = true;
 	scene.add(cone);
 	
-	//var text = makeText('Hello, Ignatz!');
-	//text.scale.x *= 100;
-	//text.scale.y *= 100;
-	//scene.add(text);
-	
-	// Make a jack with the AxisHelper
-	//var jack1 = new THREE.AxisHelper(2);
-	//scene.add(jack1);
-	
-	// Make a jack using a hierarchy of arrows
-	//var jack2 = makeJack2();
-	//scene.add(jack2);							
-
 	// Turn on the lights
 	addLights(scene);
 
@@ -88,14 +76,8 @@ function makeWorld() {
 	
 	function animate() {
 		requestAnimationFrame( animate );
-		if (rotating) {
+		if (cone.rotating && !cone.busy) {
 			cone.rotation.y += 0.01;
-			//ignatz.rotation.x += 0.01;
-			//jack2.rotation.y -= 0.01;
-			//steve.rotation.x += 0.01;
-			// text.rotation.x += 0.01;
-			// text.rotation.y += 0.01;
-			// text.rotation.z += 0.01;
 		}
 		renderer.render( scene, camera );
 	}
