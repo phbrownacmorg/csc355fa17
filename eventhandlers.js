@@ -34,6 +34,8 @@ var selectedObject;
 
 function setSelected(obj, selectVal) {
   obj.selected = selectVal;
+  // Would need to fix to turn Steve colors.  He has an array of materials,
+  // not just one.
   if (obj.material.color) {
     if (selectVal) {
       obj.originalColor = obj.material.color.getStyle();
@@ -68,6 +70,53 @@ function toNDC(event) {
     return ndc;
 }
 
+// Find and return the perspective depth scaling factor for 
+// THREE.Object3D 'obj', from the point of view of THREE.Camera 'camera'.
+// 'obj' and 'camera' are not changed.
+function depthScalingFactor(obj, camera) {
+    // pickedItem.parent === scene, so 
+    //   pickedItem.matrix === pickedItem.matrixWorld
+    var objLoc = new THREE.Vector3();
+    objLoc.setFromMatrixPosition(obj.matrixWorld);
+    var eyeLoc = new THREE.Vector3();
+    eyeLoc.setFromMatrixPosition(camera.matrixWorld);
+    
+    var diff = new THREE.Vector3();
+    diff.subVectors(eyeLoc, objLoc);
+    diff.projectOnVector(camera.getWorldDirection());
+
+    return diff.length();
+}    
+
+function translateObjInWorld(obj, dist, q, worldAxis) {
+    var objAxis = worldAxis.applyQuaternion(q);
+    objAxis.normalize();
+    obj.translateOnAxis(objAxis, dist);
+}
+
+function dragObject(obj, move, camera) {
+    // Apply a perspective correction to dx and dy
+    move.multiplyScalar(depthScalingFactor(obj, camera));
+  
+    var rect = document.getElementById('help-form').previousSibling.getBoundingClientRect();
+  
+    console.log('\nmy:', move.y, 
+                '\nw:', rect.width, '\nh:', rect.height);
+    // Scale move.y because NDC isn't square in screen space
+    move.setY(move.y * rect.height/rect.width);
+    console.log('\nmy 2:', move.y);
+  
+    //move.set(move.x * correctNDC.x, move.y * correctNDC.y);
+    // Empirical fudge factor
+    var fudge = 0.95;
+    move.multiplyScalar(fudge);
+  
+    var rot = selectedObject.getWorldQuaternion();
+    var invRot = rot.clone().inverse();
+    translateObjInWorld(obj, move.x, invRot, new THREE.Vector3(1, 0, 0));
+    translateObjInWorld(obj, move.y, invRot, new THREE.Vector3(0, 1, 0));
+}
+
 function attachHandlers(camera, objList) {
   // Find the cone
   var cone = objList.filter(function(obj) {
@@ -99,7 +148,7 @@ function attachHandlers(camera, objList) {
       case '?':
         toggleHelpText();
         break;
-    };
+    }
     evt.preventDefault();
   });
   
@@ -110,20 +159,11 @@ function attachHandlers(camera, objList) {
   var mousemovehandler = function(evt) {
       var mouse = toNDC(evt);
       // busy test *really* needs an atomic test-and-set
-      if (selectedObject && !selectedObject.busy) {
-          selectedObject.busy = true; // Flag to tell animate() not to mess...
-          var rot = selectedObject.getWorldQuaternion();
-          var invRot = rot.clone().inverse();
-          // Need to un-rotate first, so translation is in world X and Y
-          selectedObject.applyQuaternion(invRot);
-          // Make mouse relative to preceding coords
-          selectedObject.translateX(mouse.x - click.x);
-          selectedObject.translateY(mouse.y - click.y);
-          // Need to re-rotate the object, so translation doesn't
-          // overwrite its local rotation
-          selectedObject.applyQuaternion(rot);
+      if (selectedObject) {
+          dragObject(selectedObject, 
+                     new THREE.Vector2(mouse.x - click.x, mouse.y - click.y), 
+                     camera);
           click.copy(mouse);  // Only copy if this event was handled
-          selectedObject.busy = false;
       }
       evt.preventDefault();
   }

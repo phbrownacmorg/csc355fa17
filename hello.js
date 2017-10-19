@@ -46,12 +46,13 @@ function makeWorld() {
 	
 	var ignatz = makeIgnatz();
 	ignatz.translateY(1);
+	//ignatz.translateZ(-10);
 	setPickTarget(ignatz, ignatz);
 	scene.add( ignatz );
 	
 	var cone = makeCone();
-	cone.translateZ(-2);
-	cone.translateX(3);
+	cone.translateZ(-20);
+	cone.translateX(7);
 	setPickTarget(cone, cone);
 	cone.rotating = true;
 	scene.add(cone);
@@ -67,19 +68,19 @@ function makeWorld() {
 	camera.position.y = 1;
 
 	var renderer = new THREE.WebGLRenderer();
-	renderer.setSize( window.innerWidth, window.innerHeight);
+	renderer.setSize(window.innerWidth, window.innerHeight);
 	document.getElementById('three-js-div')
-			.insertBefore( renderer.domElement,
-									   document.getElementById('help-form'));
+			.insertBefore(renderer.domElement,
+									  document.getElementById('help-form'));
 	
 	attachHandlers(camera, scene.children);
 	
 	function animate() {
-		requestAnimationFrame( animate );
-		if (cone.rotating && !cone.busy) {
+		requestAnimationFrame(animate);
+		if (cone.rotating) {
 			cone.rotation.y += 0.01;
 		}
-		renderer.render( scene, camera );
+		renderer.render(scene, camera);
 	}
 	animate();
 }

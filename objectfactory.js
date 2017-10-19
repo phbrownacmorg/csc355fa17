@@ -77,21 +77,26 @@ function makeSteve() {
     var geometry = new THREE.BoxGeometry( 0.5, 0.75, 1 );
     var materials = [
     	new THREE.MeshLambertMaterial({
+					color: 0xffffff,
     			map: new THREE.TextureLoader().load('images/steve-face.png')
     		}),
     	new THREE.MeshLambertMaterial({
+					color: 0xffffff,
     			map: new THREE.TextureLoader().load('images/steve-head-back.png')
     		}),
     	new THREE.MeshLambertMaterial({
+					color: 0xffffff,
     			map: new THREE.TextureLoader().load('images/steve-top.png')
     		}),
     	new THREE.MeshLambertMaterial({
     			color: 0x000000
     		}),
     	new THREE.MeshLambertMaterial({
+					color: 0xffffff,
     			map: new THREE.TextureLoader().load('images/steve-r-side.png')
     		}),
     	new THREE.MeshLambertMaterial({
+					color: 0xffffff,
     			map: new THREE.TextureLoader().load('images/steve-l-side.png')
     		}),
     	];
