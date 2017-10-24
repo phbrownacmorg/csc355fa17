@@ -46,8 +46,10 @@ function makeWorld() {
 	
 	var ignatz = makeIgnatz();
 	ignatz.translateY(1);
-	//ignatz.translateZ(-10);
+	ignatz.translateZ(-6);
+	ignatz.translateX(2);
 	setPickTarget(ignatz, ignatz);
+	ignatz.jumping = false;
 	scene.add( ignatz );
 	
 	var cone = makeCone();
@@ -79,6 +81,9 @@ function makeWorld() {
 		requestAnimationFrame(animate);
 		if (cone.rotating) {
 			cone.rotation.y += 0.01;
+		}
+		if (ignatz.jumping) {
+				updateIgnatz(ignatz);
 		}
 		renderer.render(scene, camera);
 	}

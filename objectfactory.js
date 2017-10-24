@@ -69,8 +69,44 @@ function makeIgnatz() {
 	var ignatz = new THREE.Mesh( geometry, material );
 	ignatz.add(makeShoe(-1));
 	ignatz.add(makeShoe(1));
-	
+	ignatz.name = 'Ignatz';
 	return ignatz;
+}
+
+function ignatzJump(ignatz) {
+		//ignatz.material.color.set(0x0000ff);
+		ignatz.jumping = true;
+		ignatz.t = 0;
+		if (ignatz.material.color && !ignatz.material.originalColor) {
+				ignatz.originalColor = ignatz.material.color.getStyle();
+		}
+}
+
+function updateIgnatz(ignatz) {
+		var dt = 0.01;
+		var dz = 2;
+		ignatz.t += dt;
+		if (ignatz.t >= 1) {  // Not cyclic
+				ignatz.t = 0;
+				ignatz.jumping = false;
+				ignatz.material.color.set(ignatz.originalColor);
+				ignatz.rotation.y = 0;
+		}
+		else if (ignatz.material.color) {
+				var g = Math.round(ignatz.t * 255);
+				ignatz.material.color.set('rgb(0,' + g.toString() + ',0)');
+		}
+	
+		if (ignatz.t < 0.1) {
+				ignatz.rotation.y = -(Math.PI/2) * (ignatz.t/0.1);
+		}
+		else if (ignatz.t < 0.9) {
+				ignatz.translateZ(dz / (0.8 / dt));
+				ignatz.position.y = 1 + Math.sin(Math.PI * ((ignatz.t - 0.1)/0.8));
+		}
+		else if (ignatz.t >= 0.9) {
+			  ignatz.rotation.y = -(Math.PI/2) * ((1 - ignatz.t)/0.1);
+		}
 }
 
 function makeSteve() {

@@ -122,6 +122,9 @@ function attachHandlers(camera, objList) {
   var cone = objList.filter(function(obj) {
                                 return obj.rotating;
                            })[0];  // Only one object will pass the filter
+  var ignatz = objList.filter(function(obj) {
+                                return obj.name === 'Ignatz';
+                              })[0];
   
   var target = document.getElementsByTagName('body')[0];
   target.addEventListener('keydown', function(evt) {
@@ -148,6 +151,10 @@ function attachHandlers(camera, objList) {
       case '?':
         toggleHelpText();
         break;
+      // Make ignatz jump
+      case 'j':
+        ignatzJump(ignatz);
+        break;  
     }
     evt.preventDefault();
   });
