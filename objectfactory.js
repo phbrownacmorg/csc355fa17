@@ -69,26 +69,20 @@ function makeIgnatz() {
 	var ignatz = new THREE.Mesh( geometry, material );
 	ignatz.add(makeShoe(-1));
 	ignatz.add(makeShoe(1));
+	
 	ignatz.name = 'Ignatz';
-	return ignatz;
-}
-
-function ignatzJump(ignatz) {
-		//ignatz.material.color.set(0x0000ff);
-		ignatz.jumping = true;
-		ignatz.t = 0;
-		if (ignatz.material.color && !ignatz.material.originalColor) {
-				ignatz.originalColor = ignatz.material.color.getStyle();
-		}
-}
-
-function updateIgnatz(ignatz) {
+	
+	ignatz.animating = false;
+	ignatz.originalColor = ignatz.material.color.getStyle();
+	ignatz.t = 0;
+	
+	ignatz.update = function() {
 		var dt = 0.01;
 		var dz = 2;
 		ignatz.t += dt;
 		if (ignatz.t >= 1) {  // Not cyclic
 				ignatz.t = 0;
-				ignatz.jumping = false;
+				ignatz.animating = false;
 				ignatz.material.color.set(ignatz.originalColor);
 				ignatz.rotation.y = 0;
 		}
@@ -106,7 +100,10 @@ function updateIgnatz(ignatz) {
 		}
 		else if (ignatz.t >= 0.9) {
 			  ignatz.rotation.y = -(Math.PI/2) * ((1 - ignatz.t)/0.1);
-		}
+		}		
+	}
+	
+	return ignatz;
 }
 
 function makeSteve() {
@@ -137,6 +134,26 @@ function makeSteve() {
     		}),
     	];
     var steve = new THREE.Mesh(geometry, materials);
+		steve.name = 'Steve';
+		steve.animating = false;
+		steve.t = 0;
+		steve.dt = 0.01;
+		steve.update = function() {
+				// Update t
+				steve.t += steve.dt;
+				if (steve.t > 1 || steve.t < 0) { // Cyclic t
+					steve.dt = -steve.dt;
+					steve.t += 2 * steve.dt;
+				}
+			
+				// Make Steve bounce as a function of t
+				if (!steve.startPos) { // Record the initial position
+					steve.startPos = steve.position.clone();
+				}
+				// Linear motion looks strange at the ends
+				//steve.position.y = steve.startPos.y + 2 * steve.t;
+				steve.position.y = steve.startPos.y + 2 * Math.sin(steve.t * Math.PI / 2);
+		}
     return steve;
 }
 
@@ -157,6 +174,12 @@ function makeCone() {
 	ice_cream.translateY(-2);
 	cone.add(ice_cream);
 	cone.rotation.z = Math.PI;
+	cone.name = 'Ice cream cone';
+	
+	cone.animating = true;
+	cone.update = function() {
+			cone.rotation.y += 0.01;
+	}
 	return cone;
 }
 

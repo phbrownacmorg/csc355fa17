@@ -10,8 +10,23 @@ function addLights(scene) {
 	var lightBall = new THREE.Mesh(
 		new THREE.SphereGeometry(0.1),
 		new THREE.MeshLambertMaterial( { color: 0xffffff, side: THREE.BackSide }));
-	lightBall.position.copy(ptLight.position);
-	scene.add(lightBall);
+	ptLight.add(lightBall);
+	ptLight.name = "Light";
+	ptLight.t = 0;
+	ptLight.dt = 0.01;
+	ptLight.update = function() {
+		if (!ptLight.startPos) {
+			ptLight.startPos = ptLight.position.clone();
+		}
+		var dx = 5;
+		var dy = 1.5;
+		ptLight.position.y = ptLight.startPos.y + dy - (4 * Math.pow(ptLight.t - 0.5, 2));
+		ptLight.position.x = ptLight.startPos.x + dx * ptLight.t;
+	};
+	
+	
+	//lightBall.position.copy(ptLight.position);
+	//scene.add(lightBall);
 	
 	var ambLt = new THREE.AmbientLight(0x00dd00, 0.05);
 	scene.add(ambLt);
@@ -76,15 +91,25 @@ function makeWorld() {
 									  document.getElementById('help-form'));
 	
 	attachHandlers(camera, scene.children);
-	
+	var animatables = scene.children.filter(function(obj) {
+																						return obj.name;
+																					});
+	console.log(animatables.length + ' animatable objects');
+			
 	function animate() {
 		requestAnimationFrame(animate);
-		if (cone.rotating) {
-			cone.rotation.y += 0.01;
-		}
-		if (ignatz.jumping) {
-				updateIgnatz(ignatz);
-		}
+		animatables.forEach(function(obj) {
+			if (obj.animating) {
+					obj.update();
+			}
+		})
+		
+// 		if (cone.rotating) {
+// 			cone.rotation.y += 0.01;
+// 		}
+// 		if (ignatz.jumping) {
+// 				updateIgnatz(ignatz);
+// 		}
 		renderer.render(scene, camera);
 	}
 	animate();

@@ -1,11 +1,11 @@
-// Space bar toggles whether objects are rotating
-function toggleRotation(obj) {
+// Space bar toggles whether objects are animating
+function toggleAnimation(obj) {
     // Instead of simple negation, this handles the case where the attribute
     //   hasn't been set previously
-    if (!obj.rotating) { 
-      obj.rotating = true;
+    if (!obj.animating) { 
+      obj.animating = true;
     }
-    else { obj.rotating = false; }
+    else { obj.animating = false; }
 }
 
 function toggleHelpText() {
@@ -117,15 +117,15 @@ function dragObject(obj, move, camera) {
     translateObjInWorld(obj, move.y, invRot, new THREE.Vector3(0, 1, 0));
 }
 
+function getObjFromName(objList, name) {
+  var filt = objList.filter(function(obj) {
+                                return obj.name === name;
+                           });
+  return filt[0];
+}
+
 function attachHandlers(camera, objList) {
-  // Find the cone
-  var cone = objList.filter(function(obj) {
-                                return obj.rotating;
-                           })[0];  // Only one object will pass the filter
-  var ignatz = objList.filter(function(obj) {
-                                return obj.name === 'Ignatz';
-                              })[0];
-  
+  var ptLight = getObjFromName(objList, 'Light');
   var target = document.getElementsByTagName('body')[0];
   target.addEventListener('keydown', function(evt) {
     var d = 0.1;
@@ -138,14 +138,19 @@ function attachHandlers(camera, objList) {
         moveCamera(camera, 0, -d);
         break;
       case 'ArrowLeft':
-        moveCamera(camera, -d, 0);
+        //moveCamera(camera, -d, 0);
+        ptLight.t = Math.max(0, ptLight.t - ptLight.dt);
+        ptLight.update();
         break;
       case 'ArrowRight':
-        moveCamera(camera, d, 0);
+        ptLight.t = Math.min(1, ptLight.t + ptLight.dt);
+        ptLight.update();
+        //moveCamera(camera, d, 0);
         break;
       // Spacebar toggles rotation
       case ' ':
-        toggleRotation(cone);
+        var cone = getObjFromName(objList, 'Ice cream cone');  // Only one object will pass the filter
+        toggleAnimation(cone);
         break;
       // ? toggles help text
       case '?':
@@ -153,8 +158,13 @@ function attachHandlers(camera, objList) {
         break;
       // Make ignatz jump
       case 'j':
-        ignatzJump(ignatz);
-        break;  
+        var ignatz = getObjFromName(objList, 'Ignatz');
+        ignatz.animating = true;
+        break;
+      case 's':
+        var steve = getObjFromName(objList, 'Steve');
+        toggleAnimation(steve);
+        break;
     }
     evt.preventDefault();
   });
