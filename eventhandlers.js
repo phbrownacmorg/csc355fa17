@@ -59,7 +59,9 @@ function pickObject(obj) {
     }
     // Select the new one
     selectedObject = obj;
-    setSelected(selectedObject, true);
+    if (selectedObject) {
+        setSelected(selectedObject, true);
+    }
 }
 
 // Converts the clientX and clientY of an event to NDC,
@@ -127,6 +129,11 @@ function getObjFromName(objList, name) {
 function attachHandlers(camera, objList) {
   var ptLight = getObjFromName(objList, 'Light');
   var target = document.getElementsByTagName('body')[0];
+  console.log(target);
+  
+  var cone = getObjFromName(objList, 'Ice cream cone');  // Only one object will pass the filter
+  var ignatz = getObjFromName(objList, 'Ignatz');
+  
   target.addEventListener('keydown', function(evt) {
     var d = 0.1;
     switch (evt.key) {
@@ -149,7 +156,6 @@ function attachHandlers(camera, objList) {
         break;
       // Spacebar toggles rotation
       case ' ':
-        var cone = getObjFromName(objList, 'Ice cream cone');  // Only one object will pass the filter
         toggleAnimation(cone);
         break;
       // ? toggles help text
@@ -158,7 +164,6 @@ function attachHandlers(camera, objList) {
         break;
       // Make ignatz jump
       case 'j':
-        var ignatz = getObjFromName(objList, 'Ignatz');
         ignatz.animating = true;
         break;
       case 's':
@@ -166,7 +171,7 @@ function attachHandlers(camera, objList) {
         toggleAnimation(steve);
         break;
     }
-    evt.preventDefault();
+    //evt.preventDefault();
   });
   
   // Mouse handler
@@ -182,32 +187,39 @@ function attachHandlers(camera, objList) {
                      camera);
           click.copy(mouse);  // Only copy if this event was handled
       }
-      evt.preventDefault();
+      //evt.preventDefault();
   }
   
   target.addEventListener('mousedown', function(evt) {
       // Set mouse to NDC
       click = toNDC(evt);
-      console.log(click.x + ',' + click.y);
+      //console.log(click.x + ',' + click.y);
       raycaster.setFromCamera(click, camera);
       
       var hits = raycaster.intersectObjects(objList, true);
       // hits.length always > 0, since the background planes are included
-      if (hits.length > 0 && hits[0].object.pickTarget) {
-          pickObject(hits[0].object.pickTarget);
-      }
+      pickObject(hits[0].object.pickTarget);
+      //if (hits.length > 0 && hits[0].object.pickTarget) {
+      //    pickObject(hits[0].object.pickTarget);
+      //}
     
       target.addEventListener('mousemove', mousemovehandler);
-      evt.preventDefault();
+      //evt.preventDefault();
   });
   
   target.addEventListener('mouseup', function(evt) {
       target.removeEventListener('mousemove', mousemovehandler);
-      evt.preventDefault();
+      //evt.preventDefault();
   });
   
   // Button handler
   document.getElementById('help-button')
     .addEventListener('click', toggleHelpText);
+  
+  var icecream = getObjFromName(cone.children, 'ice cream');
+  icecream.target = ignatz;
+  document.getElementById('slider').addEventListener('input', function() { 
+    icecream.update(slider.value);
+  });
 }
 

@@ -20,10 +20,9 @@ function addLights(scene) {
 		}
 		var dx = 5;
 		var dy = 1.5;
-		ptLight.position.y = ptLight.startPos.y + dy - (4 * Math.pow(ptLight.t - 0.5, 2));
+		ptLight.position.y = ptLight.startPos.y + dy * (1 - (4 * (ptLight.t - 0.5) * (ptLight.t - 0.5)));
 		ptLight.position.x = ptLight.startPos.x + dx * ptLight.t;
 	};
-	
 	
 	//lightBall.position.copy(ptLight.position);
 	//scene.add(lightBall);
@@ -68,10 +67,10 @@ function makeWorld() {
 	scene.add( ignatz );
 	
 	var cone = makeCone();
-	cone.translateZ(-20);
-	cone.translateX(7);
+	cone.translateZ(-10);
+	cone.translateX(-7);
 	setPickTarget(cone, cone);
-	cone.rotating = true;
+	//cone.rotating = true;
 	scene.add(cone);
 	
 	// Turn on the lights
@@ -98,18 +97,12 @@ function makeWorld() {
 			
 	function animate() {
 		requestAnimationFrame(animate);
+		// Automatic animations
 		animatables.forEach(function(obj) {
 			if (obj.animating) {
 					obj.update();
 			}
 		})
-		
-// 		if (cone.rotating) {
-// 			cone.rotation.y += 0.01;
-// 		}
-// 		if (ignatz.jumping) {
-// 				updateIgnatz(ignatz);
-// 		}
 		renderer.render(scene, camera);
 	}
 	animate();
