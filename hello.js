@@ -47,7 +47,7 @@ function makeWorld() {
     //tex.wrapT = THREE.RepeatWrapping;
     //tex.repeat.set(128,128);
 	ground.rotateX(-Math.PI / 2);
-	ground.translateZ( -10 );
+	ground.translateZ( -2 );
 	scene.add(ground);
 	
 	var steve = makeSteve();
@@ -73,6 +73,34 @@ function makeWorld() {
 	//cone.rotating = true;
 	scene.add(cone);
 	
+	var gPump = makeGreatPumpkin(1);
+	gPump.translateZ(-7);
+	gPump.translateX(-2);
+	gPump.translateY(-4);
+	window.setTimeout(function() { gPump.animating = true; }, 2000);
+	scene.add(gPump);
+	
+	var gPump2 = makeGreatPumpkin(1);
+	gPump2.name = 'Pumpkin 2';
+	gPump2.translateZ(-9);
+	gPump2.translateX(-4);
+	gPump2.translateY(-4);
+	window.setInterval(function() { 
+		gPump2.position.y = -4;
+		gPump2.animating = true; 
+	}, 3000);
+	//gPump.rotation.x = Math.PI/4;
+	scene.add(gPump2);
+	
+	var gPump3 = makeGreatPumpkin(1);
+	gPump3.name = 'Pumpkin 3';
+	gPump3.translateZ(-5);
+	//gPump3.translateX(-4);
+	gPump3.translateY(-4);
+	scene.add(gPump3);
+	
+	//scene.add(makeJack2(2));
+	
 	// Turn on the lights
 	addLights(scene);
 
@@ -93,14 +121,20 @@ function makeWorld() {
 	var animatables = scene.children.filter(function(obj) {
 																						return obj.name;
 																					});
-	console.log(animatables.length + ' animatable objects');
+	console.log(animatables.length + ' animatable objects:');
+	//for (var i = 0; i < animatables.length; i++) {
+	//	console.log(i.toString() + ': ' + animatables[i].name)
+	//}
 			
 	function animate() {
 		requestAnimationFrame(animate);
 		// Automatic animations
 		animatables.forEach(function(obj) {
-			if (obj.animating) {
-					obj.update();
+			if (obj.timer) {
+					obj.update(obj.timer.getT());
+			}
+			else if (obj.animating) {
+				obj.update();
 			}
 		})
 		renderer.render(scene, camera);

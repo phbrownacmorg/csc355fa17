@@ -1,3 +1,22 @@
+// Extremely minimal Timer class
+var Timer = function(time) {
+    this.startTime;
+    this.maxTime = time;
+  
+    this.start = function() {
+        this.startTime = Date.now();
+    }
+    
+    this.getElapsed = function() {
+        return Date.now() - this.startTime;
+    }
+    
+    this.getT = function() {
+        // t never exceeds 1
+        return Math.min(1, this.getElapsed()/this.maxTime);
+    }
+}
+
 // Space bar toggles whether objects are animating
 function toggleAnimation(obj) {
     // Instead of simple negation, this handles the case where the attribute
@@ -36,7 +55,7 @@ function setSelected(obj, selectVal) {
   obj.selected = selectVal;
   // Would need to fix to turn Steve colors.  He has an array of materials,
   // not just one.
-  if (obj.material.color) {
+  if (obj.material && obj.material.color) {
     if (selectVal) {
       obj.originalColor = obj.material.color.getStyle();
       obj.material.color.set('rgb(255, 0, 0)');
@@ -102,11 +121,11 @@ function dragObject(obj, move, camera) {
   
     var rect = document.getElementById('help-form').previousSibling.getBoundingClientRect();
   
-    console.log('\nmy:', move.y, 
-                '\nw:', rect.width, '\nh:', rect.height);
+    //console.log('\nmy:', move.y, 
+    //            '\nw:', rect.width, '\nh:', rect.height);
     // Scale move.y because NDC isn't square in screen space
     move.setY(move.y * rect.height/rect.width);
-    console.log('\nmy 2:', move.y);
+    //console.log('\nmy 2:', move.y);
   
     //move.set(move.x * correctNDC.x, move.y * correctNDC.y);
     // Empirical fudge factor
@@ -166,9 +185,15 @@ function attachHandlers(camera, objList) {
       case 'j':
         ignatz.animating = true;
         break;
+      // Toggle Steve bouncing 
       case 's':
         var steve = getObjFromName(objList, 'Steve');
         toggleAnimation(steve);
+        break;
+      // Make the third Great Pumpkin rise
+      case 't':
+        var pumpkin = getObjFromName(objList, 'Pumpkin 3');
+        pumpkin.start();
         break;
     }
     //evt.preventDefault();
