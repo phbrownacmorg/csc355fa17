@@ -334,3 +334,62 @@ function makeGreatPumpkin(r) {
 		
     return gourd;
 }
+
+
+function makeInsulator(h) {
+	var r = h/10;
+	var g = new THREE.CylinderGeometry(r, r, h);
+	var tex = new THREE.TextureLoader().load('images/insulator-128x128.png');
+	var m = new THREE.MeshStandardMaterial({
+			color: 0x808080,
+			metalness: 0,
+			bumpMap: tex,
+			displacementMap: tex,
+			displacementScale: 0.05
+	});
+	var insulator = new THREE.Mesh(g, m);
+	insulator.add(makeJack2(h));
+	
+	// Return the location of the insulator's top end in world space
+	insulator.findTop = function() {
+		top = new Vector3(0, h/2, 0);
+		top.add(insulator.position);
+		return insulator.localToWorld(top);
+	}
+	
+	// Create a lightning bolt from the top of the insulator to
+	// targetPt, which is in world space.
+	insulator.lightningTo(targetPt, parent) {
+		
+	}
+	
+	return insulator;
+}
+
+
+function makeTransformer(h) {
+	var r = h/3;
+	var g = new THREE.CylinderGeometry(r, r, h);
+	var m = new THREE.MeshStandardMaterial({
+		color: 0xffffff,
+		metalness: 1.0,
+		roughness: 0.9
+	});
+	var can = new THREE.Mesh(g, m);
+	
+	var ins1 = makeInsulator(h/2);
+	ins1.translateY(h/2 + h/4);
+	ins1.translateX(r * 0.7);
+	ins1.rotateZ(-Math.PI/15);
+	can.add(ins1);
+	
+	var ins2 = makeInsulator(h/2);
+	ins2.translateY(h/2 + h/4);
+	ins2.translateX(-r * 0.7);
+	ins2.rotateZ(Math.PI/15);
+	can.add(ins2);
+	
+	//can.translateY(h/2);
+	return can;
+	
+}

@@ -85,10 +85,10 @@ function makeWorld() {
 	gPump2.translateZ(-9);
 	gPump2.translateX(-4);
 	gPump2.translateY(-4);
-	window.setInterval(function() { 
-		gPump2.position.y = -4;
-		gPump2.animating = true; 
-	}, 3000);
+// 	window.setInterval(function() { 
+// 		gPump2.position.y = -4;
+// 		gPump2.animating = true; 
+// 	}, 3000);
 	//gPump.rotation.x = Math.PI/4;
 	scene.add(gPump2);
 	
@@ -98,6 +98,9 @@ function makeWorld() {
 	//gPump3.translateX(-4);
 	gPump3.translateY(-4);
 	scene.add(gPump3);
+	
+	var xfmr = makeTransformer(1);
+	scene.add(xfmr);
 	
 	//scene.add(makeJack2(2));
 	
