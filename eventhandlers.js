@@ -215,6 +215,7 @@ function attachHandlers(camera, objList) {
       //evt.preventDefault();
   }
   
+  var xfmr = getObjFromName(objList, 'Zorchimus Deuce');
   target.addEventListener('mousedown', function(evt) {
       // Set mouse to NDC
       click = toNDC(evt);
@@ -223,13 +224,12 @@ function attachHandlers(camera, objList) {
       
       var hits = raycaster.intersectObjects(objList, true);
       // hits.length always > 0, since the background planes are included
-      pickObject(hits[0].object.pickTarget);
-      //if (hits.length > 0 && hits[0].object.pickTarget) {
-      //    pickObject(hits[0].object.pickTarget);
-      //}
-    
-      target.addEventListener('mousemove', mousemovehandler);
-      //evt.preventDefault();
+      // xfmr.parent is the scene
+      xfmr.zap(hits[0].point, xfmr.parent);
+      
+      // Was here to select an object by clicking on it
+//       pickObject(hits[0].object.pickTarget);
+//       target.addEventListener('mousemove', mousemovehandler);
   });
   
   target.addEventListener('mouseup', function(evt) {

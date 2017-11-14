@@ -352,16 +352,40 @@ function makeInsulator(h) {
 	
 	// Return the location of the insulator's top end in world space
 	insulator.findTop = function() {
-		top = new Vector3(0, h/2, 0);
+		var top = new THREE.Vector3(0, h/2, 0);
 		top.add(insulator.position);
-		return insulator.localToWorld(top);
-	}
+		return insulator.parent.localToWorld(top);
+	};
 	
 	// Create a lightning bolt from the top of the insulator to
 	// targetPt, which is in world space.
-	insulator.lightningTo(targetPt, parent) {
+	var numJags = 30;
+	insulator.lightningTo = function(targetPt, parent) {
+			//console.log(insulator.findTop());
+			//console.log(targetPt);
+			var top = insulator.findTop();
+			var line = new THREE.LineCurve3(top, targetPt);
+			// Add jaggies
+			var jagScale = (targetPt.distanceTo(top) / numJags) * 0.2;
+			var pts = line.getPoints(numJags);
+			// Leave the first and last points alone
+			for (var i = 1; i < numJags - 1; i++) {
+				var perturbation = new THREE.Vector3(Math.random() - 0.5,
+																						Math.random() - 0.5,
+																						Math.random() - 0.5);
+				perturbation.multiplyScalar(2 * jagScale);
+				pts[i].add(perturbation);
+			}
+			var sparkPath = new THREE.CatmullRomCurve3(pts); //, false, 'catmullrom', 100);
 		
-	}
+			var sparkGeom = new THREE.TubeGeometry(sparkPath, numJags, 0.02);
+			var sparkMat = new THREE.MeshStandardMaterial({
+				color: 0xffffff,
+				emissive: 0xffffff
+			});
+			var spark = new THREE.Mesh(sparkGeom, sparkMat);
+			parent.add(spark);
+	};
 	
 	return insulator;
 }
@@ -376,6 +400,7 @@ function makeTransformer(h) {
 		roughness: 0.9
 	});
 	var can = new THREE.Mesh(g, m);
+	can.name = 'Zorchimus Deuce';
 	
 	var ins1 = makeInsulator(h/2);
 	ins1.translateY(h/2 + h/4);
@@ -388,6 +413,11 @@ function makeTransformer(h) {
 	ins2.translateX(-r * 0.7);
 	ins2.rotateZ(Math.PI/15);
 	can.add(ins2);
+	
+	can.zap = function(point, parent) {
+			ins1.lightningTo(point, parent);
+			ins2.lightningTo(point, parent);
+	};
 	
 	//can.translateY(h/2);
 	return can;

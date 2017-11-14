@@ -100,6 +100,8 @@ function makeWorld() {
 	scene.add(gPump3);
 	
 	var xfmr = makeTransformer(1);
+	xfmr.translateX(2);
+	xfmr.rotateY(Math.PI/2);
 	scene.add(xfmr);
 	
 	//scene.add(makeJack2(2));
