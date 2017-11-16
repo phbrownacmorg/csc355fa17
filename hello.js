@@ -62,15 +62,11 @@ function makeWorld() {
 	ignatz.translateY(1);
 	ignatz.translateZ(-6);
 	ignatz.translateX(2);
-	setPickTarget(ignatz, ignatz);
-	ignatz.jumping = false;
 	scene.add( ignatz );
 	
 	var cone = makeCone();
 	cone.translateZ(-10);
 	cone.translateX(-7);
-	setPickTarget(cone, cone);
-	//cone.rotating = true;
 	scene.add(cone);
 	
 	var gPump = makeGreatPumpkin(1);
@@ -89,7 +85,6 @@ function makeWorld() {
 // 		gPump2.position.y = -4;
 // 		gPump2.animating = true; 
 // 	}, 3000);
-	//gPump.rotation.x = Math.PI/4;
 	scene.add(gPump2);
 	
 	var gPump3 = makeGreatPumpkin(1);
@@ -122,14 +117,11 @@ function makeWorld() {
 			.insertBefore(renderer.domElement,
 									  document.getElementById('help-form'));
 	
-	attachHandlers(camera, scene.children);
+	attachHandlers(camera, scene);
 	var animatables = scene.children.filter(function(obj) {
 																						return obj.name;
 																					});
 	console.log(animatables.length + ' animatable objects:');
-	//for (var i = 0; i < animatables.length; i++) {
-	//	console.log(i.toString() + ': ' + animatables[i].name)
-	//}
 			
 	function animate() {
 		requestAnimationFrame(animate);

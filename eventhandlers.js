@@ -138,20 +138,20 @@ function dragObject(obj, move, camera) {
     translateObjInWorld(obj, move.y, invRot, new THREE.Vector3(0, 1, 0));
 }
 
-function getObjFromName(objList, name) {
-  var filt = objList.filter(function(obj) {
-                                return obj.name === name;
-                           });
-  return filt[0];
-}
+// function getObjFromName(objList, name) {
+//   var filt = objList.filter(function(obj) {
+//                                 return obj.name === name;
+//                            });
+//   return filt[0];
+// }
 
-function attachHandlers(camera, objList) {
-  var ptLight = getObjFromName(objList, 'Light');
+function attachHandlers(camera, scene) {
+  var ptLight = scene.getObjectByName('Light');
   var target = document.getElementsByTagName('body')[0];
   console.log(target);
   
-  var cone = getObjFromName(objList, 'Ice cream cone');  // Only one object will pass the filter
-  var ignatz = getObjFromName(objList, 'Ignatz');
+  var cone = scene.getObjectByName('Ice cream cone');  // Only one object will pass the filter
+  var ignatz = scene.getObjectByName('Ignatz');
   
   target.addEventListener('keydown', function(evt) {
     var d = 0.1;
@@ -187,12 +187,12 @@ function attachHandlers(camera, objList) {
         break;
       // Toggle Steve bouncing 
       case 's':
-        var steve = getObjFromName(objList, 'Steve');
+        var steve = scene.getObjectByName('Steve');
         toggleAnimation(steve);
         break;
       // Make the third Great Pumpkin rise
       case 't':
-        var pumpkin = getObjFromName(objList, 'Pumpkin 3');
+        var pumpkin = scene.getObjectByName('Pumpkin 3');
         pumpkin.start();
         break;
     }
@@ -215,14 +215,14 @@ function attachHandlers(camera, objList) {
       //evt.preventDefault();
   }
   
-  var xfmr = getObjFromName(objList, 'Zorchimus Deuce');
+  var xfmr = scene.getObjectByName('Zorchimus Deuce');
   target.addEventListener('mousedown', function(evt) {
       // Set mouse to NDC
       click = toNDC(evt);
       //console.log(click.x + ',' + click.y);
       raycaster.setFromCamera(click, camera);
       
-      var hits = raycaster.intersectObjects(objList, true);
+      var hits = raycaster.intersectObjects(scene.children, true);
       // hits.length always > 0, since the background planes are included
       // xfmr.parent is the scene
       xfmr.zap(hits[0].point, xfmr.parent);
@@ -241,7 +241,7 @@ function attachHandlers(camera, objList) {
   document.getElementById('help-button')
     .addEventListener('click', toggleHelpText);
   
-  var icecream = getObjFromName(cone.children, 'ice cream');
+  var icecream = cone.getObjectByName('ice cream');
   icecream.target = ignatz;
   document.getElementById('slider').addEventListener('input', function() { 
     icecream.update(slider.value);
