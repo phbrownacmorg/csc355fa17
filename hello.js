@@ -99,6 +99,18 @@ function makeWorld() {
 	xfmr.rotateY(Math.PI/2);
 	scene.add(xfmr);
 	
+	var hydro = makeH2();
+	hydro.translateX(-1.5);
+	scene.add(hydro);
+	
+	var spheres = makeSpheresGroup();
+	spheres.translateY(2.3);
+	spheres.translateX(1);
+	scene.add(spheres);
+	
+	var spriteRect = makeSprites();
+	scene.add(spriteRect);
+	
 	//scene.add(makeJack2(2));
 	
 	// Turn on the lights

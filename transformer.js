@@ -1,6 +1,6 @@
 function makeLightning(source, target, parent) {
     // Tunable parameters
-    //var duration = 1000; // in ms
+    var duration = 1000; // in ms
     var numJags = 16;
     var jagScaleFactor = 0.2;
     var thickness = 0.02; // Radius of bolt
@@ -21,14 +21,32 @@ function makeLightning(source, target, parent) {
  		}
 		var sparkPath = new THREE.CatmullRomCurve3(pts);
 		
-		var sparkGeom = new THREE.TubeGeometry(sparkPath, 11 * numJags + 2, thickness);
+		var sparkGeom = new THREE.TubeGeometry(sparkPath, 10 * numJags + 1, thickness);
 		var sparkMat = new THREE.MeshStandardMaterial({
 				color: 0xffffff,
 				emissive: 0xffffff,
         side: THREE.DoubleSide
 		});
 		var spark = new THREE.Mesh(sparkGeom, sparkMat);
-		parent.add(spark);
+		spark.elapsed = 0; // How long since the start of the zap, in ms
+		
+		spark.turnOn = function() {
+			parent.add(spark);
+			var timeOn = Math.min(duration - spark.elapsed, Math.random() * duration * 0.5);
+			spark.elapsed += timeOn;
+			window.setTimeout(spark.turnOff, timeOn);
+		}
+	
+		spark.turnOff = function() {
+			parent.remove(spark);
+			var timeOff = Math.min(duration - spark.elapsed, Math.random() * duration * 0.1);
+			spark.elapsed += timeOff;
+			if (spark.elapsed < duration) {
+					window.setTimeout(spark.turnOn, timeOff);
+			}
+		}
+		
+		spark.turnOn();
 }
 
 function makeInsulator(h, isLeft) {
@@ -78,7 +96,8 @@ function makeTransformer(h) {
 	var m = new THREE.MeshStandardMaterial({
 		color: 0xffffff,
 		metalness: 1.0,
-		roughness: 0.9
+		roughness: 0.9,
+		map: new THREE.TextureLoader().load('images/xfmr.png')
 	});
 	var can = new THREE.Mesh(g, m);
 	can.name = 'Zorchimus Deuce';

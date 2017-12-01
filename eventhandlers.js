@@ -148,7 +148,7 @@ function dragObject(obj, move, camera) {
 function attachHandlers(camera, scene) {
   var ptLight = scene.getObjectByName('Light');
   var target = document.getElementsByTagName('body')[0];
-  console.log(target);
+  //console.log(target);
   
   var cone = scene.getObjectByName('Ice cream cone');  // Only one object will pass the filter
   var ignatz = scene.getObjectByName('Ignatz');
@@ -225,7 +225,22 @@ function attachHandlers(camera, scene) {
       var hits = raycaster.intersectObjects(scene.children, true);
       // hits.length always > 0, since the background planes are included
       // xfmr.parent is the scene
-      xfmr.zap(hits[0].point, xfmr.parent);
+      var targetPt = hits[0].point.clone();
+      // Tunable limit to keep the lightning bolt from going off into the distance
+      var minZ = -20;
+      if (targetPt.z < minZ) {
+          // Need to clamp to a point on the viewing ray, so the endpoint
+          // is actually where the mouse clicked
+          var viewRay = targetPt.clone();
+          viewRay.sub(camera.position);
+          
+          // I *could* solve for where the viewing ray crosses z = minZ,
+          // or I could just clamp the length in a parallel projection
+          viewRay.clampLength(0, camera.position.z - minZ);
+          targetPt.add(camera.position, viewRay);
+      }
+      //targetPt.z = Math.max(minZ, targetPt.z);
+      xfmr.zap(targetPt, xfmr.parent);
       
       // Was here to select an object by clicking on it
 //       pickObject(hits[0].object.pickTarget);

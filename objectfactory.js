@@ -97,3 +97,107 @@ function setPickTarget(obj, target) {
 		}
 }
 
+function makeHydrogenAtom(r) {
+		var g = new THREE.SphereGeometry(r, 32, 32);
+		var m = new THREE.MeshPhysicalMaterial({
+				color: 0xffffff,
+				transparent: true,
+				opacity: 0.6,
+				depthTest: false
+		});
+		var atom = new THREE.Mesh(g, m);
+		return atom;
+}
+
+function makeH2() {
+		var xDist = 0.3;
+		var group = new THREE.Group();
+		var h1 = makeHydrogenAtom(0.5);
+		h1.translateX(xDist);
+		var h2 = makeHydrogenAtom(0.5);
+		h2.translateX(-xDist);
+		group.add(h1);
+		group.add(h2);
+	
+		group.name = 'H2';
+		
+		group.animating = true;
+		group.dTheta = 0.01;
+		group.update = function() {
+			var maxTheta = Math.PI/6;
+			group.rotation.y += group.dTheta;
+			if (Math.abs(group.rotation.y) > maxTheta) {
+					group.dTheta = -group.dTheta;
+					group.rotation.y += 2 * group.dTheta;
+			}
+		};
+	
+		return group;
+}
+
+function makeSpheresGroup() {
+		var group = new THREE.Group();
+	
+		var r = makeHydrogenAtom(0.5);
+		r.material.color.set(0xff00ff);
+	
+		var g = makeHydrogenAtom(0.5);
+		g.material.color.set(0x00ffff);
+		g.material.blending = THREE.CustomBlending;
+		g.material.srcBlend = THREE.ZeroFactor;
+		g.material.dstBlend = THREE.OneFactor;
+		g.translateY(0.3);
+		g.translateX(0.3);
+	
+		var b = makeHydrogenAtom(0.5);
+		b.material.color.set(0xffff00);
+		b.translateY(0.3);
+		b.translateX(-0.3);
+	
+		var bg = new THREE.Mesh(new THREE.PlaneGeometry(2, 2),
+														new THREE.MeshBasicMaterial({
+																color: 0xffffff,
+																transparent: true
+														}));
+		bg.translateY(0.4);
+		bg.translateX(0.3);
+		bg.translateZ(-0.7);
+	
+		group.add(r);
+		group.add(g);
+		group.add(b);
+		group.add(bg);
+	
+		group.name = 'Spheres';
+		return group;
+}
+
+function makeSprites() {
+		var g = new THREE.PlaneGeometry(0.375, 0.5);
+	
+		var offsets = new Array();
+		var row1Width = 0.1067;
+		for (var i = 0; i < 9; i++) {
+			offsets.push(new THREE.Vector2(i * row1Width, 0.7176));
+		}
+	
+		var tex = new THREE.TextureLoader().load('images/tiff_sheet_by_tedelf.png');
+	  var alphaTex = new THREE.TextureLoader().load('images/gray_tedelf.png');
+		alphaTex.wrapS = tex.wrapS = THREE.RepeatWrapping;
+		alphaTex.wrapT = tex.wrapT = THREE.RepeatWrapping;
+		tex.repeat.set(0.1067, 0.2824);
+		alphaTex.repeat.copy(tex.repeat);
+		tex.offset.copy(offsets[0]);
+		alphaTex.offset.copy(tex.offset);
+	
+		var m = new THREE.MeshBasicMaterial({
+			  alphaMap: alphaTex,
+				color: 0xffffff,
+				map: tex,
+				transparent: true //,
+			  //opacity: 1
+		});
+		var rect = new THREE.Mesh(g, m);
+		rect.name = 'Female elfin';
+		return rect;
+}
