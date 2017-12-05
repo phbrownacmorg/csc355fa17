@@ -258,8 +258,14 @@ function attachHandlers(camera, scene) {
   
   var icecream = cone.getObjectByName('ice cream');
   icecream.target = ignatz;
-  document.getElementById('slider').addEventListener('input', function() { 
+  var slider = document.getElementById('slider');
+  slider.addEventListener('input', function() { 
     icecream.update(slider.value);
   });
+  
+  var sprites = scene.getObjectByName('Female elfin');
+  slider.addEventListener('input', function() {
+      sprites.update(slider.value);
+  })
 }
 

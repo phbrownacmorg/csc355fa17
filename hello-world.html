@@ -14,7 +14,13 @@
 	#help-form { position: relative; z-index: 1; }
 	#help-text { position: relative; z-index: -1; }
 	#slider { width: 80%; margin-left: 5%; }
+	#clock { position: relative; z-index: 1; 
+					 left: 45%; top: -1.3em;
+	         font-family: arial, helvetica, sans-serif;
+					 font-size: 200%;
+	}
 </style>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="three.min.js"></script>
 <script src="objectfactory.js"></script>
 <script src="ignatz.js"></script>
@@ -43,6 +49,7 @@
 				<option value="1" />
 			</datalist>
 		</form>
+		<p id="clock">00:00</p>
 		<div id="help-text">
 			Commands:
 			<dl>

@@ -99,6 +99,9 @@ function makeTransformer(h) {
 		roughness: 0.9,
 		map: new THREE.TextureLoader().load('images/xfmr.png')
 	});
+	m.map.wrapS = THREE.RepeatWrapping;
+	m.map.wrapT = THREE.RepeatWrapping;
+	m.map.repeat.set(2, 1);
 	var can = new THREE.Mesh(g, m);
 	can.name = 'Zorchimus Deuce';
 	

@@ -178,14 +178,22 @@ function makeSprites() {
 		var offsets = new Array();
 		var row1Width = 0.1067;
 		for (var i = 0; i < 9; i++) {
-			offsets.push(new THREE.Vector2(i * row1Width, 0.7176));
+			offsets.push(new THREE.Vector2(i * row1Width, 0.7326));
+		}
+		var row2Width = 0.11;
+		for (i = 0; i < 9; i++) {
+			offsets.push(new THREE.Vector2(i * row2Width, 0.4651));
+		}
+		var row3Width = 0.13;
+		for (i = 0; i < 2; i++) {
+			offsets.push(new THREE.Vector2(0.7467 + i * row3Width, 0.1977))
 		}
 	
 		var tex = new THREE.TextureLoader().load('images/tiff_sheet_by_tedelf.png');
-	  var alphaTex = new THREE.TextureLoader().load('images/gray_tedelf.png');
+	  var alphaTex = new THREE.TextureLoader().load('images/gray_tedelf_2.png');
 		alphaTex.wrapS = tex.wrapS = THREE.RepeatWrapping;
 		alphaTex.wrapT = tex.wrapT = THREE.RepeatWrapping;
-		tex.repeat.set(0.1067, 0.2824);
+		tex.repeat.set(0.1067, 0.2674);
 		alphaTex.repeat.copy(tex.repeat);
 		tex.offset.copy(offsets[0]);
 		alphaTex.offset.copy(tex.offset);
@@ -199,5 +207,11 @@ function makeSprites() {
 		});
 		var rect = new THREE.Mesh(g, m);
 		rect.name = 'Female elfin';
+	
+		rect.update = function(t) {
+				var offsetNum = Math.min(offsets.length - 1, 
+																 Math.floor(offsets.length * t));
+				tex.offset.copy(offsets[offsetNum]);
+		};
 		return rect;
 }

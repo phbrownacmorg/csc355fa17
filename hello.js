@@ -129,6 +129,21 @@ function makeWorld() {
 			.insertBefore(renderer.domElement,
 									  document.getElementById('help-form'));
 	
+	var timer = new Timer(75000);
+	timer.update = function () {
+			var timeLeft = (1 - timer.getT()) * timer.maxTime; // ms
+			var secsLeft = Math.floor(timeLeft / 1000) % 60;   // sec
+			var minsLeft = Math.floor(timeLeft / 60000);       // minutes
+		
+			$('#clock').text((1e15 + minsLeft + '').slice(-2) 
+											 + ':' + 
+											 (1e15 + secsLeft + '').slice(-2));
+			if (minsLeft === 0 && secsLeft === 0) {
+				$('#clock').css('color', 'red');
+			}
+	}
+	timer.start();
+	
 	attachHandlers(camera, scene);
 	var animatables = scene.children.filter(function(obj) {
 																						return obj.name;
@@ -137,6 +152,7 @@ function makeWorld() {
 			
 	function animate() {
 		requestAnimationFrame(animate);
+		timer.update();
 		// Automatic animations
 		animatables.forEach(function(obj) {
 			if (obj.timer) {
